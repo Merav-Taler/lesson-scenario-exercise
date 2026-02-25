@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תרגול מסמך אפיון - פיתוח יחידות למידה דיגיטליות</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --group1: #E85D3A;
+    --group1-light: #FFF0EC;
+    --group1-border: #F4A08C;
+    --group2: #2E86AB;
+    --group2-light: #E8F4F8;
+    --group2-border: #8CC5D9;
+    --group3: #7B2D8E;
+    --group3-light: #F3E8F7;
+    --group3-border: #C08DD1;
+    --group4: #1B813E;
+    --group4-light: #E8F5ED;
+    --group4-border: #8BC9A0;
+    --bg: #FAFAFA;
+    --text: #1A1A2E;
+    --text-light: #555;
+    --card-bg: #FFFFFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-hover: 0 4px 24px rgba(0,0,0,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* ===== HOME SCREEN ===== */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .home-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
+  }
+
+  .home-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .home-header .course-name {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .home-header h1 {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .home-header .subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--text-light);
+  }
+
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 700px;
+    width: 100%;
+  }
+
+  .group-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .group-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 5px;
+  }
+
+  .group-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .group-card .group-number {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .group-card .group-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .group-card .group-domain {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-light);
+  }
+
+  .group-card[data-group="1"]::before { background: var(--group1); }
+  .group-card[data-group="1"]:hover { border-color: var(--group1-border); }
+  .group-card[data-group="1"] .group-number { color: var(--group1); }
+
+  .group-card[data-group="2"]::before { background: var(--group2); }
+  .group-card[data-group="2"]:hover { border-color: var(--group2-border); }
+  .group-card[data-group="2"] .group-number { color: var(--group2); }
+
+  .group-card[data-group="3"]::before { background: var(--group3); }
+  .group-card[data-group="3"]:hover { border-color: var(--group3-border); }
+  .group-card[data-group="3"] .group-number { color: var(--group3); }
+
+  .group-card[data-group="4"]::before { background: var(--group4); }
+  .group-card[data-group="4"]:hover { border-color: var(--group4-border); }
+  .group-card[data-group="4"] .group-number { color: var(--group4); }
+
+  /* ===== SCENARIO SCREEN ===== */
+  .scenario-screen {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 32px 60px;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .back-btn {
+    background: none;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all 0.2s;
+  }
+
+  .back-btn:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+
+  .timer-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .timer-display {
+    font-size: 28px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .timer-display.warning { color: #E85D3A; }
+
+  .timer-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .timer-btn.start { background: #1B813E; color: white; }
+  .timer-btn.start:hover { background: #156B33; }
+  .timer-btn.pause { background: #E85D3A; color: white; }
+  .timer-btn.pause:hover { background: #D04A28; }
+  .timer-btn.reset { background: #eee; color: var(--text); }
+  .timer-btn.reset:hover { background: #ddd; }
+
+  .scenario-header {
+    margin-bottom: 32px;
+  }
+
+  .scenario-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  [data-active-group="1"] .scenario-badge { background: var(--group1-light); color: var(--group1); }
+  [data-active-group="2"] .scenario-badge { background: var(--group2-light); color: var(--group2); }
+  [data-active-group="3"] .scenario-badge { background: var(--group3-light); color: var(--group3); }
+  [data-active-group="4"] .scenario-badge { background: var(--group4-light); color: var(--group4); }
+
+  .scenario-header h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .scenario-header .org-type {
+    font-size: 16px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  /* Content sections */
+  .content-section {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .content-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .content-section h3 .icon {
+    font-size: 22px;
+  }
+
+  .content-section p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #333;
+  }
+
+  /* Email style */
+  .email-block {
+    background: #F8F9FA;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+
+  .email-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E0E0E0;
+    font-size: 14px;
+    color: var(--text-light);
+    flex-wrap: wrap;
+  }
+
+  .email-header strong { color: var(--text); }
+
+  .email-body {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* Quote style */
+  .quote-block {
+    border-right: 4px solid #ccc;
+    padding: 12px 20px;
+    margin: 14px 0;
+    background: #FAFAFA;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+  }
+
+  .quote-block .quote-author {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 8px;
+  }
+
+  [data-active-group="1"] .quote-block { border-right-color: var(--group1); }
+  [data-active-group="2"] .quote-block { border-right-color: var(--group2); }
+  [data-active-group="3"] .quote-block { border-right-color: var(--group3); }
+  [data-active-group="4"] .quote-block { border-right-color: var(--group4); }
+
+  /* Stat block */
+  .stat-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #F0F4FF;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+  }
+
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  [data-active-group="1"] .stat-number { color: var(--group1); }
+  [data-active-group="2"] .stat-number { color: var(--group2); }
+  [data-active-group="3"] .stat-number { color: var(--group3); }
+  [data-active-group="4"] .stat-number { color: var(--group4); }
+
+  .stat-text {
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  /* Task section */
+  .task-section {
+    border: 2px dashed #ccc;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-top: 28px;
+  }
+
+  [data-active-group="1"] .task-section { border-color: var(--group1-border); background: var(--group1-light); }
+  [data-active-group="2"] .task-section { border-color: var(--group2-border); background: var(--group2-light); }
+  [data-active-group="3"] .task-section { border-color: var(--group3-border); background: var(--group3-light); }
+  [data-active-group="4"] .task-section { border-color: var(--group4-border); background: var(--group4-light); }
+
+  .task-section h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .task-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .task-list li {
+    padding: 8px 0;
+    font-size: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .task-list li::before {
+    content: '☐';
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .task-list li strong {
+    font-weight: 600;
+  }
+
+  /* Voice Agent Section */
+  .agent-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .agent-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .agent-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 36px;
+  }
+
+  .agent-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .agent-role {
+    font-size: 15px;
+    font-weight: 300;
+    opacity: 0.8;
+    margin-bottom: 16px;
+  }
+
+  .agent-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 20px;
+  }
+
+  .agent-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .agent-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 20px rgba(255,255,255,0.2);
+  }
+
+  .agent-btn .pulse-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #1B813E;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .agent-placeholder {
+    font-size: 13px;
+    opacity: 0.5;
+    margin-top: 12px;
+  }
+
+  /* Tips section */
+  .tips-section {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+
+  .tips-section h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #92400E;
+  }
+
+  .tips-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .tips-list li {
+    padding: 4px 0;
+    font-size: 14px;
+    color: #78350F;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .tips-list li::before {
+    content: '💡';
+    flex-shrink: 0;
+  }
+
+  /* Collapsible reference docs */
+  .ref-toggle {
+    background: var(--card-bg);
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+  }
+
+  .ref-toggle:hover { background: #f8f8f8; }
+
+  .ref-toggle h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ref-toggle .arrow {
+    transition: transform 0.3s;
+    font-size: 18px;
+  }
+
+  .ref-toggle.open .arrow {
+    transform: rotate(180deg);
+  }
+
+  .ref-content {
+    display: none;
+    margin-bottom: 20px;
+  }
+
+  .ref-content.open { display: block; }
+
+  /* PIN Modal */
+  .pin-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pin-overlay.active { display: flex; }
+
+  .pin-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: pinFadeIn 0.3s ease;
+  }
+
+  @keyframes pinFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .pin-modal .pin-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .pin-modal h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .pin-modal p {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 24px;
+  }
+
+  .pin-inputs {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+    direction: ltr;
+  }
+
+  .pin-inputs input {
+    width: 56px;
+    height: 64px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    font-family: 'Heebo', sans-serif;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .pin-inputs input:focus {
+    border-color: var(--group1);
+  }
+
+  .pin-inputs input.error {
+    border-color: #E85D3A;
+    animation: pinShake 0.4s ease;
+  }
+
+  @keyframes pinShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  .pin-error-msg {
+    color: #E85D3A;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    min-height: 20px;
+  }
+
+  .pin-cancel {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .pin-cancel:hover { color: var(--text); }
+
+  .ref-toggle.locked::after {
+    content: '🔒';
+    font-size: 16px;
+  }
+
+  .ref-toggle.unlocked::after {
+    content: '🔓';
+    font-size: 16px;
+  }
+
+  /* Footer */
+  .footer-note {
+    text-align: center;
+    margin-top: 32px;
+    padding: 16px;
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .groups-grid { grid-template-columns: 1fr; max-width: 340px; }
+    .home-header h1 { font-size: 28px; }
+    .scenario-screen { padding: 16px; }
+    .top-bar { flex-direction: column; gap: 12px; }
+    .agent-section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HOME SCREEN ===== -->
+<div id="home" class="screen active">
+  <div class="home-screen">
+    <div class="home-header">
+      <div class="course-name">פיתוח יחידות למידה דיגיטליות | סמסטר ב׳ | שיעור 1</div>
+      <h1>תרגול מסמך אפיון ופיצוח</h1>
+      <div class="subtitle">בחרו את הקבוצה שלכם</div>
+    </div>
+    <div class="groups-grid">
+      <div class="group-card" data-group="1" onclick="showScenario(1)">
+        <div class="group-number">1</div>
+        <div class="group-title">רשת "הים התיכון"</div>
+        <div class="group-domain">בתי מלון · בטיחות במזון</div>
+      </div>
+      <div class="group-card" data-group="2" onclick="showScenario(2)">
+        <div class="group-number">2</div>
+        <div class="group-title">"שומרה ביטוח"</div>
+        <div class="group-domain">ביטוח · מעבר למערכת חדשה</div>
+      </div>
+      <div class="group-card" data-group="3" onclick="showScenario(3)">
+        <div class="group-number">3</div>
+        <div class="group-title">רשת "בזאר"</div>
+        <div class="group-domain">קמעונאות · נגישות שירות</div>
+      </div>
+      <div class="group-card" data-group="4" onclick="showScenario(4)">
+        <div class="group-number">4</div>
+        <div class="group-title">"NovaTech"</div>
+        <div class="group-domain">הייטק · אבטחת מידע</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCENARIO 1 ===== -->
+<div id="scenario-1" class="screen" data-active-group="1">
+  <div class="scenario-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()">← חזרה לדף הראשי</button>
+      <div class="timer-container">
+        <button class="timer-btn reset" onclick="resetTimer()">איפוס</button>
+        <div class="timer-display" id="timer-1">40:00</div>
+        <button class="timer-btn start" id="timer-btn-1" onclick="toggleTimer(1)">התחלה</button>
+      </div>
+    </div>
+
+    <div class="scenario-header">
+      <span class="scenario-badge">קבוצה 1</span>
+      <h2>רשת "הים התיכון" — בתי מלון</h2>
+      <div class="org-type">תחום: רגולציה · בריאות · בטיחות במזון</div>
+    </div>
+
+    <div class="agent-section">
+      <div class="agent-avatar">👩‍💼</div>
+      <div class="agent-name">רינת כהן</div>
+      <div class="agent-role">מנהלת משאבי אנוש · רשת מלונות "הים התיכון"</div>
+      <div class="agent-desc">
+        רינת פנתה אליכם כמפתחי הדרכה כדי שתעזרו לה לבנות לומדה לארגון.
+        <strong>תחקרו אותה</strong> — שאלו שאלות, חפרו, נסו להבין את הרקע, הצורך, קהל היעד והאתגרים. רק ככה תוכלו למלא את מסמך האפיון!
+      </div>
+      <button class="agent-btn" id="agent-btn-1" onclick="openAgent(1)">
+        <span class="pulse-dot"></span>
+        התחילו שיחה עם רינת
+      </button>
+      <div class="agent-placeholder">הלינק לסוכן הקולי יוזן על ידי המרצה</div>
+    </div>
+
+    <div class="tips-section">
+      <h4>טיפים לתחקור מוצלח</h4>
+      <ul class="tips-list">
+        <li>התחילו בשאלות פתוחות: "ספרי לנו מה קורה אצלכם בארגון"</li>
+        <li>שאלו על קהל היעד: "מי העובדים שצריכים את ההדרכה? מה מאפיין אותם?"</li>
+        <li>הפרידו בין צורך עסקי לצורך הדרכתי: "מה הבעיה של הארגון?" vs "מה חסר לעובדים?"</li>
+        <li>חפרו לעומק: "את אומרת שהם לא שומרים על כללים — למה לדעתך?"</li>
+        <li>שאלו על מגבלות: "מה לוח הזמנים? מה התקציב? איפה העובדים ילמדו?"</li>
+      </ul>
+    </div>
+
+    <div class="ref-toggle" onclick="toggleRef(1)">
+      <h3><span class="icon">📁</span> חומרי רקע כתובים (לחצו לפתוח)</h3>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ref-content" id="ref-1">
+
+    <div class="content-section">
+      <h3><span class="icon">📋</span> הבריף שלכם</h3>
+      <p>
+        את/ה מפתח/ת לומדות בחברת פיתוח הדרכה. הגיעה אליכם פנייה מרינת כהן, מנהלת משאבי אנוש ברשת מלונות "הים התיכון" (8 סניפים ברחבי הארץ).
+      </p>
+      <p style="margin-top: 12px;">
+        רינת מספרת: <em>"לפני שבועיים עברנו ביקורת של משרד הבריאות ב-3 מהסניפים שלנו. התוצאות היו קשות — נמצאו ליקויים בהפרדת מזון חי ומבושל, טמפרטורות אחסון לא תקינות, ועובדים שלא שטפו ידיים כנדרש. קיבלנו 90 יום לתקן את כל הממצאים, אחרת יסגרו לנו את המטבחים. אנחנו חייבים פתרון הדרכתי מהיר שיכסה את כל עובדי המטבח והתפעול ב-8 הסניפים."</em>
+      </p>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📧</span> מייל פנימי — מהמנכ"ל להנהלה</h3>
+      <div class="email-block">
+        <div class="email-header">
+          <span><strong>מאת:</strong> אבי לוי, מנכ"ל</span>
+          <span><strong>אל:</strong> צוות ההנהלה</span>
+          <span><strong>נושא:</strong> דחוף — ממצאי ביקורת בטיחות מזון</span>
+        </div>
+        <div class="email-body">
+          צוות יקר,<br><br>
+          כפי שידוע לכם, ממצאי הביקורת חמורים. מעבר לסכנה של סגירת מטבחים — שמשמעותה ביטול כל אירועי האולמות בשלושת הסניפים — אנחנו חשופים גם לפגיעה תדמיתית קשה. כבר עכשיו הוציא העיתונאי X פוסט ברשתות על "מלונות שלא שומרים על תקני היגיינה".<br><br>
+          אני מצפה שתוך שבועיים יוצג לי פתרון הדרכתי מקיף. זה לא רק עניין של לסמן וי ברגולציה — אני רוצה שהעובדים שלנו באמת יבינו למה זה חשוב ויישמו את זה בשטח.<br><br>
+          אבי
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">💬</span> ציטוטים מעובדים (מתוך ראיונות שטח)</h3>
+      <div class="quote-block">
+        "אני עובד פה 10 שנים, תמיד עשיתי ככה ואף פעם לא היתה בעיה. פתאום באים ואומרים שאני עושה לא נכון?"
+        <div class="quote-author">— יוסי, טבח ראשי, סניף אשדוד, ותק 10 שנים</div>
+      </div>
+      <div class="quote-block">
+        "לא שמעתי על הנהלים החדשים. אולי שלחו מייל, אבל אנחנו לא ליד מחשב — אנחנו במטבח כל היום."
+        <div class="quote-author">— מרים, עוזרת מטבח, סניף חיפה, ותק שנה</div>
+      </div>
+      <div class="quote-block">
+        "אין לי זמן לקרוא נהלים באמצע משמרת. כשיש אירוע של 300 איש, אנחנו רצים."
+        <div class="quote-author">— אחמד, מנהל תפעול אולמות, סניף תל אביב, ותק 4 שנים</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📊</span> נתונים שקיבלתם מהארגון</h3>
+      <div class="stat-block">
+        <div class="stat-number">40%</div>
+        <div class="stat-text">מעובדי המטבח עם ותק של <strong>פחות מחצי שנה</strong> — תחלופת עובדים גבוהה ברשת</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">3/8</div>
+        <div class="stat-text">סניפים נמצאו עם ליקויים — אבל ההדרכה נדרשת ל<strong>כל 8 הסניפים</strong></div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">90</div>
+        <div class="stat-text">ימים לתיקון כל הממצאים — <strong>לוח זמנים דחוק</strong></div>
+      </div>
+    </div>
+
+    </div><!-- close ref-content -->
+
+    <div class="task-section">
+      <h3>📝 המשימה שלכם</h3>
+      <p style="margin-bottom: 14px;">על בסיס התחקור והחומרים, מלאו יחד את חלקים א'-ד' במסמך האפיון, והתכוננו להציג את הפיצוח שלכם (5 דקות):</p>
+      <ul class="task-list">
+        <li><strong>חלק א' — הגדרת הצורך:</strong> מהו הרקע? מהו הצורך העסקי (לא רק רגולטורי!)? מהו הצורך ההדרכתי?</li>
+        <li><strong>חלק ב' — קהל היעד:</strong> מי הם? מה מאפיין אותם? מה ההשלכה על עיצוב הלומדה?</li>
+        <li><strong>חלק ג' — מטרות:</strong> מטרת על + 3-4 מטרות ביניים (פעלים מדידים!)</li>
+        <li><strong>חלק ד' — הפיצוח:</strong> מהו הקונספט? שיטת ארגון התוכן? שיטת ניווט? מה חווית הלומד?</li>
+      </ul>
+    </div>
+
+    <div class="footer-note">בהצלחה! המרצה תגיע לבקר בחדר שלכם 🎓</div>
+  </div>
+</div>
+
+<!-- ===== SCENARIO 2 ===== -->
+<div id="scenario-2" class="screen" data-active-group="2">
+  <div class="scenario-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()">← חזרה לדף הראשי</button>
+      <div class="timer-container">
+        <button class="timer-btn reset" onclick="resetTimer()">איפוס</button>
+        <div class="timer-display" id="timer-2">40:00</div>
+        <button class="timer-btn start" id="timer-btn-2" onclick="toggleTimer(2)">התחלה</button>
+      </div>
+    </div>
+
+    <div class="scenario-header">
+      <span class="scenario-badge">קבוצה 2</span>
+      <h2>"שומרה ביטוח" — מעבר למערכת CRM</h2>
+      <div class="org-type">תחום: טכנולוגיה · שינוי ארגוני</div>
+    </div>
+
+    <div class="agent-section">
+      <div class="agent-avatar">👨‍💼</div>
+      <div class="agent-name">אלון דרורי</div>
+      <div class="agent-role">סמנכ"ל טכנולוגיות · "שומרה ביטוח"</div>
+      <div class="agent-desc">
+        אלון פנה אליכם כמפתחי הדרכה כדי שתעזרו לו להכין את הארגון למעבר למערכת חדשה.
+        <strong>תחקרו אותו</strong> — שאלו שאלות, חפרו, נסו להבין את הרקע, הצורך, קהל היעד והאתגרים. רק ככה תוכלו למלא את מסמך האפיון!
+      </div>
+      <button class="agent-btn" id="agent-btn-2" onclick="openAgent(2)">
+        <span class="pulse-dot"></span>
+        התחילו שיחה עם אלון
+      </button>
+      <div class="agent-placeholder">הלינק לסוכן הקולי יוזן על ידי המרצה</div>
+    </div>
+
+    <div class="tips-section">
+      <h4>טיפים לתחקור מוצלח</h4>
+      <ul class="tips-list">
+        <li>שאלו למה מחליפים מערכת: "מה לא עובד במערכת הנוכחית?"</li>
+        <li>חפרו על קהל היעד: "מי העובדים? איך הם עובדים היום?"</li>
+        <li>חפשו את ההיבט הרגשי: "מה העובדים מרגישים לגבי השינוי?"</li>
+        <li>הבינו את הדחיפות: "מה יקרה אם אנשים לא ישתמשו במערכת החדשה?"</li>
+        <li>שאלו על ניסיונות עבר: "נעשה משהו דומה בעבר? מה קרה?"</li>
+      </ul>
+    </div>
+
+    <div class="ref-toggle" onclick="toggleRef(2)">
+      <h3><span class="icon">📁</span> חומרי רקע כתובים (לחצו לפתוח)</h3>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ref-content" id="ref-2">
+
+    <div class="content-section">
+      <h3><span class="icon">📋</span> הבריף שלכם</h3>
+      <p>
+        את/ה מפתח/ת לומדות בחברת פיתוח הדרכה. הגיעה אליכם פנייה מאלון דרורי, סמנכ"ל טכנולוגיות ב"שומרה ביטוח" — חברת ביטוח גדולה עם 200 סוכני ביטוח בשטח ו-80 מוקדני שירות.
+      </p>
+      <p style="margin-top: 12px;">
+        אלון מסביר: <em>"בעוד 3 חודשים אנחנו עוברים ממערכת ה-CRM הישנה, שמשרתת אותנו 15 שנה, למערכת חדשה ומודרנית. המערכת החדשה טובה בהרבה — אבל אני יודע שזה הולך להיות קשה. הסוכנים בשטח עובדים עם הישנה בשינה, והמוקדנים מפחדים מהשינוי. אני צריך לומדה שתכין את כולם למעבר."</em>
+      </p>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📧</span> מייל פנימי — מסוכן ביטוח ותיק</h3>
+      <div class="email-block">
+        <div class="email-header">
+          <span><strong>מאת:</strong> שמעון פרץ, סוכן ביטוח בכיר</span>
+          <span><strong>אל:</strong> צוות סוכני השטח</span>
+          <span><strong>נושא:</strong> עוד מערכת חדשה...</span>
+        </div>
+        <div class="email-body">
+          חבר'ה,<br><br>
+          שמעתם על המעבר למערכת החדשה? אני לא מבין למה לשנות משהו שעובד. בכל פעם שהם מחליפים מערכת, אנחנו מפסידים שבועות של עבודה עד שלומדים איפה כל דבר. ובזמן הזה — הלקוחות מחכים ואנחנו מפסידים עסקאות.<br><br>
+          מי שרוצה — שיעבור. אני עם הישנה עד שיוכיחו לי שהחדשה באמת שווה את הבלגן.<br><br>
+          שמעון
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">💬</span> ציטוטים מעובדים (מתוך ראיונות שטח)</h3>
+      <div class="quote-block">
+        "אני בחברה רק 8 חודשים. בקושי הספקתי ללמוד את המערכת הקיימת, ועכשיו מחליפים הכל? אני מרגישה שוב כמו ביום הראשון."
+        <div class="quote-author">— נועה, מוקדנית שירות, ותק 8 חודשים</div>
+      </div>
+      <div class="quote-block">
+        "המערכת הישנה איטית ומעצבנת, אבל לפחות אני יודע בדיוק איפה כל כפתור. עם החדשה אני חושש שאאבד זמן מול לקוחות."
+        <div class="quote-author">— רון, סוכן ביטוח, ותק 12 שנים</div>
+      </div>
+      <div class="quote-block">
+        "אם יראו לי שזה באמת חוסך לי זמן ביום-יום — אני בעד. אבל שלא יגידו לי 'תלמד כפתורים' בלי להבין למה."
+        <div class="quote-author">— ענת, ראש צוות מוקד, ותק 6 שנים</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📊</span> נתונים שקיבלתם מהארגון</h3>
+      <div class="stat-block">
+        <div class="stat-number">35%</div>
+        <div class="stat-text">מהסוכנים <strong>לא השתמשו</strong> במערכת החדשה גם חודש אחרי ההשקה — בפרויקט דומה בחברת ביטוח אחרת</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">2</div>
+        <div class="stat-text">קהלי יעד שונים לחלוטין: <strong>סוכנים בשטח</strong> (ניידות, עצמאות) ו<strong>מוקדנים במשרד</strong> (שגרה, פיקוח)</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">15</div>
+        <div class="stat-text">שנות עבודה עם המערכת הישנה — <strong>הרגלים מושרשים</strong> שקשה לשנות</div>
+      </div>
+    </div>
+
+    </div><!-- close ref-content -->
+
+    <div class="task-section">
+      <h3>📝 המשימה שלכם</h3>
+      <p style="margin-bottom: 14px;">על בסיס התחקור והחומרים, מלאו יחד את חלקים א'-ד' במסמך האפיון, והתכוננו להציג את הפיצוח שלכם (5 דקות):</p>
+      <ul class="task-list">
+        <li><strong>חלק א' — הגדרת הצורך:</strong> מהו הרקע? מהו הצורך העסקי? מהו הצורך ההדרכתי (שימו לב — לא רק ידע טכני!)?</li>
+        <li><strong>חלק ב' — קהל היעד:</strong> מי הם? האם מדובר בקהל יעד אחד או שניים? מה ההשלכה?</li>
+        <li><strong>חלק ג' — מטרות:</strong> מטרת על + 3-4 מטרות ביניים (פעלים מדידים!)</li>
+        <li><strong>חלק ד' — הפיצוח:</strong> מהו הקונספט? איך מתמודדים עם התנגדות לשינוי? שיטת ארגון? ניווט?</li>
+      </ul>
+    </div>
+
+    <div class="footer-note">בהצלחה! המרצה תגיע לבקר בחדר שלכם 🎓</div>
+  </div>
+</div>
+
+<!-- ===== SCENARIO 3 ===== -->
+<div id="scenario-3" class="screen" data-active-group="3">
+  <div class="scenario-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()">← חזרה לדף הראשי</button>
+      <div class="timer-container">
+        <button class="timer-btn reset" onclick="resetTimer()">איפוס</button>
+        <div class="timer-display" id="timer-3">40:00</div>
+        <button class="timer-btn start" id="timer-btn-3" onclick="toggleTimer(3)">התחלה</button>
+      </div>
+    </div>
+
+    <div class="scenario-header">
+      <span class="scenario-badge">קבוצה 3</span>
+      <h2>רשת "בזאר" — שירות נגיש</h2>
+      <div class="org-type">תחום: קמעונאות · נגישות · ערכים</div>
+    </div>
+
+    <div class="agent-section">
+      <div class="agent-avatar">👩‍💼</div>
+      <div class="agent-name">דנה מזרחי</div>
+      <div class="agent-role">מנהלת חוויית לקוח · רשת "בזאר"</div>
+      <div class="agent-desc">
+        דנה פנתה אליכם כמפתחי הדרכה כדי שתעזרו לה לשפר את השירות ללקוחות עם מוגבלויות.
+        <strong>תחקרו אותה</strong> — שאלו שאלות, חפרו, נסו להבין את הרקע, הצורך, קהל היעד והאתגרים. רק ככה תוכלו למלא את מסמך האפיון!
+      </div>
+      <button class="agent-btn" id="agent-btn-3" onclick="openAgent(3)">
+        <span class="pulse-dot"></span>
+        התחילו שיחה עם דנה
+      </button>
+      <div class="agent-placeholder">הלינק לסוכן הקולי יוזן על ידי המרצה</div>
+    </div>
+
+    <div class="tips-section">
+      <h4>טיפים לתחקור מוצלח</h4>
+      <ul class="tips-list">
+        <li>שאלו על סוגי המוגבלויות: "אילו סוגי מוגבלויות הכי נפוצים אצלכם?"</li>
+        <li>הבינו מה הבעיה: "מה בדיוק לא עובד? העובדים לא רוצים לעזור או לא יודעים?"</li>
+        <li>חפשו את הפער ההדרכתי: "מה חסר — ידע? מיומנות? שינוי תפיסה?"</li>
+        <li>שאלו על מגבלות: "כמה זמן יש לכל עובד ללמידה?"</li>
+        <li>חשבו על מטרות מדידות: "איך תדעו שההדרכה הצליחה?"</li>
+      </ul>
+    </div>
+
+    <div class="ref-toggle" onclick="toggleRef(3)">
+      <h3><span class="icon">📁</span> חומרי רקע כתובים (לחצו לפתוח)</h3>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ref-content" id="ref-3">
+
+    <div class="content-section">
+      <h3><span class="icon">📋</span> הבריף שלכם</h3>
+      <p>
+        את/ה מפתח/ת לומדות בחברת פיתוח הדרכה. הגיעה אליכם פנייה מדנה מזרחי, מנהלת חוויית לקוח ברשת "בזאר" — רשת חנויות קמעונאות גדולה עם 25 סניפים ומאות עובדי מכירות.
+      </p>
+      <p style="margin-top: 12px;">
+        דנה מספרת: <em>"ברבעון האחרון קיבלנו 47 תלונות על יחס לא מותאם ללקוחות עם מוגבלויות. חלק מהתלונות מדאיגות — עובדים שהתעלמו מלקוח בכיסא גלגלים, עובדת שדיברה עם המלווה במקום עם הלקוח עצמו, מקרה שבו לקוח עם לקות שמיעה לא הצליח לקבל שירות. נציבות שוויון זכויות לאנשים עם מוגבלות כבר פנתה אלינו. אנחנו חייבים לעשות משהו."</em>
+      </p>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📧</span> דו"ח לקוח סמוי (קטע)</h3>
+      <div class="email-block">
+        <div class="email-header">
+          <span><strong>מאת:</strong> חברת מחקר חיצונית</span>
+          <span><strong>נושא:</strong> ממצאי ביקור לקוח סמוי — נגישות שירות, סניף ראשון לציון</span>
+        </div>
+        <div class="email-body">
+          הלקוח הסמוי (משתמש בכיסא גלגלים) נכנס לחנות בשעה 14:30. העובדת בכניסה חייכה אך לא הציעה עזרה. במחלקת האלקטרוניקה, מוצר מבוקש היה על מדף גבוה. הלקוח פנה לעובד — העובד ניסה לעזור אך ניכר שהרגיש אי-נוחות, נמנע מקשר עין ישיר, ואמר "אולי המלווה שלך יכול לעזור?" כשהלקוח היה לבד.<br><br>
+          <strong>הערת הבודק:</strong> "הרצון הטוב היה שם, אבל חסרים כלים מעשיים. העובד לא ידע איך לפנות, מה מותר להציע ומה לא."
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">💬</span> ציטוטים מעובדים (מתוך ראיונות שטח)</h3>
+      <div class="quote-block">
+        "הצוות שלי רוצה לעזור, הם פשוט לא יודעים מה לעשות. הם מפחדים לפגוע או להגיד משהו לא נכון, אז הם מעדיפים לא לגשת."
+        <div class="quote-author">— עידו, מנהל סניף רמת גן, ותק 3 שנים</div>
+      </div>
+      <div class="quote-block">
+        "אף אחד לא לימד אותי מה עושים כשנכנס לקוח עם כלב נחייה. אני לא רוצה לפגוע, אז אני פשוט לא אומרת כלום."
+        <div class="quote-author">— שירה, עובדת מכירות, גיל 21, ותק 4 חודשים</div>
+      </div>
+      <div class="quote-block">
+        "עשינו פעם הרצאה על נגישות. זה היה יום שלם של ישיבה ושקפים. אחרי שבוע כבר אף אחד לא זכר כלום."
+        <div class="quote-author">— מיכל, ראש צוות מכירות, ותק 5 שנים</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📊</span> נתונים שקיבלתם מהארגון</h3>
+      <div class="stat-block">
+        <div class="stat-number">65%</div>
+        <div class="stat-text">מעובדי המכירות בני <strong>18-25</strong> — צעירים, בעבודה ראשונה, רוצים לעשות טוב אבל חסרי ניסיון</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">50%</div>
+        <div class="stat-text"><strong>תחלופה שנתית</strong> של עובדים — כל הדרכה חייבת להיות מתאימה גם לעובדים חדשים לחלוטין</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">47</div>
+        <div class="stat-text">תלונות ברבעון האחרון — <strong>עלייה של 200%</strong> ביחס לשנה שעברה</div>
+      </div>
+    </div>
+
+    </div><!-- close ref-content -->
+
+    <div class="task-section">
+      <h3>📝 המשימה שלכם</h3>
+      <p style="margin-bottom: 14px;">על בסיס התחקור והחומרים, מלאו יחד את חלקים א'-ד' במסמך האפיון, והתכוננו להציג את הפיצוח שלכם (5 דקות):</p>
+      <ul class="task-list">
+        <li><strong>חלק א' — הגדרת הצורך:</strong> מהו הרקע? מהו הצורך העסקי (לא רק ערכי!)? מהו הצורך ההדרכתי (ידע? מיומנות? תפיסה?)?</li>
+        <li><strong>חלק ב' — קהל היעד:</strong> מי הם? מה האתגר המרכזי בקהל הזה? מה ההשלכה על עיצוב הלומדה?</li>
+        <li><strong>חלק ג' — מטרות:</strong> מטרת על + 3-4 מטרות ביניים (פעלים מדידים! לא "יבין את החשיבות")</li>
+        <li><strong>חלק ד' — הפיצוח:</strong> מהו הקונספט? איך מלמדים שינוי תפיסה בלומדה? שיטת ארגון? ניווט?</li>
+      </ul>
+    </div>
+
+    <div class="footer-note">בהצלחה! המרצה תגיע לבקר בחדר שלכם 🎓</div>
+  </div>
+</div>
+
+<!-- ===== SCENARIO 4 ===== -->
+<div id="scenario-4" class="screen" data-active-group="4">
+  <div class="scenario-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()">← חזרה לדף הראשי</button>
+      <div class="timer-container">
+        <button class="timer-btn reset" onclick="resetTimer()">איפוס</button>
+        <div class="timer-display" id="timer-4">40:00</div>
+        <button class="timer-btn start" id="timer-btn-4" onclick="toggleTimer(4)">התחלה</button>
+      </div>
+    </div>
+
+    <div class="scenario-header">
+      <span class="scenario-badge">קבוצה 4</span>
+      <h2>"NovaTech" — אבטחת מידע</h2>
+      <div class="org-type">תחום: הייטק · אבטחת מידע · Compliance</div>
+    </div>
+
+    <div class="agent-section">
+      <div class="agent-avatar">👩‍💻</div>
+      <div class="agent-name">רוני שגב</div>
+      <div class="agent-role">VP HR · NovaTech</div>
+      <div class="agent-desc">
+        רוני פנתה אליכם כמפתחי הדרכה אחרי אירוע אבטחה חמור בחברה.
+        <strong>תחקרו אותה</strong> — שאלו שאלות, חפרו, נסו להבין את הרקע, הצורך, קהל היעד והאתגרים. רק ככה תוכלו למלא את מסמך האפיון!
+      </div>
+      <button class="agent-btn" id="agent-btn-4" onclick="openAgent(4)">
+        <span class="pulse-dot"></span>
+        התחילו שיחה עם רוני
+      </button>
+      <div class="agent-placeholder">הלינק לסוכן הקולי יוזן על ידי המרצה</div>
+    </div>
+
+    <div class="tips-section">
+      <h4>טיפים לתחקור מוצלח</h4>
+      <ul class="tips-list">
+        <li>הבינו מה קרה: "ספרי לנו על האירוע. מה בדיוק השתבש?"</li>
+        <li>חפרו מעבר ל-compliance: "מה הצורך העסקי מעבר לדרישות SOC2?"</li>
+        <li>שאלו על הקהל: "מי העובדים? איך הם מגיבים? מה המוטיבציה שלהם?"</li>
+        <li>זהו את האתגר: "איך מדברים לאנשי טכנולוגיה שחושבים שהם יודעים הכל?"</li>
+        <li>שאלו על מגבלות: "כמה זמן יש? מה הformats שיעבדו בתרבות שלכם?"</li>
+      </ul>
+    </div>
+
+    <div class="ref-toggle" onclick="toggleRef(4)">
+      <h3><span class="icon">📁</span> חומרי רקע כתובים (לחצו לפתוח)</h3>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ref-content" id="ref-4">
+
+    <div class="content-section">
+      <h3><span class="icon">📋</span> הבריף שלכם</h3>
+      <p>
+        את/ה מפתח/ת לומדות בחברת פיתוח הדרכה. הגיעה אליכם פנייה מרוני שגב, VP HR ב-"NovaTech" — חברת סטארטאפ בצמיחה מהירה (180 עובדים, כ-50 עובדים חדשים בשנה) שמפתחת פלטפורמת ניהול נתונים לחברות פיננסיות.
+      </p>
+      <p style="margin-top: 12px;">
+        רוני מספרת: <em>"לפני חודש קרה אצלנו אירוע שזעזע את כולנו. 3 עובדים נפלו בהתקפת פישינג ממוקדת — מייל שנראה כאילו הוא מהמנכ"ל שלנו. אחד מהם מסר שם משתמש וסיסמה, ונחשף מידע רגיש של לקוחות. מעבר לנזק המיידי — אנחנו מחויבים בתקן SOC2, שדורש הדרכת אבטחת מידע שנתית מתועדת. אנחנו חייבים לומדה שתהיה גם אפקטיבית וגם תעמוד בדרישות ה-compliance."</em>
+      </p>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📧</span> מייל פנימי — מה-CISO לכלל העובדים</h3>
+      <div class="email-block">
+        <div class="email-header">
+          <span><strong>מאת:</strong> טל אביב, CISO</span>
+          <span><strong>אל:</strong> כלל עובדי NovaTech</span>
+          <span><strong>נושא:</strong> אירוע אבטחה — מה שקרה ומה עושים</span>
+        </div>
+        <div class="email-body">
+          צוות NovaTech,<br><br>
+          אני כותב אליכם אחרי אירוע אבטחה שהתרחש השבוע. התקפת פישינג ממוקדת (spear phishing) הצליחה לחדור אלינו. המייל נראה לגיטימי לחלוטין — הוא הגיע מכתובת שנראתה כמו של דני (המנכ"ל) וביקש "אישור גישה דחוף למערכת לקוחות".<br><br>
+          3 עובדים לחצו על הלינק. אחד מהם הזין credentials. התוקפים קיבלו גישה ל-dashboard של לקוחות למשך 4 שעות לפני שזיהינו וחסמנו.<br><br>
+          <strong>זה לא עניין של "עובד טיפש"</strong> — ההתקפה הייתה מתוחכמת. אבל אנחנו חייבים להשתפר.<br><br>
+          טל
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">💬</span> ציטוטים מעובדים (מתוך ראיונות שטח)</h3>
+      <div class="quote-block">
+        "אנחנו אנשי טכנולוגיה, אנחנו יודעים מה זה פישינג. הבעיה שזה היה ממש מתוחכם. אבל אני לא צריך לומדה שתסביר לי מה זה פישינג כאילו אני בן 5."
+        <div class="quote-author">— אור, מפתח Full-Stack בכיר, ותק 3 שנים</div>
+      </div>
+      <div class="quote-block">
+        "אני מעצבת UX, לא מהנדסת אבטחה. כשמגיע מייל מהמנכ"ל עם 'דחוף' — אני לוחצת. זה אנושי."
+        <div class="quote-author">— ליאור, מעצבת מוצר, ותק שנה</div>
+      </div>
+      <div class="quote-block">
+        "ההדרכת compliance האחרונה הייתה מצגת של 40 שקפים שכולם עברו ב-fast-forward רק כדי לסמן שהשלימו. אף אחד לא למד שום דבר."
+        <div class="quote-author">— יונתן, ראש צוות מוצר, ותק 4 שנים</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📊</span> נתונים שקיבלתם מהארגון</h3>
+      <div class="stat-block">
+        <div class="stat-number">SOC2</div>
+        <div class="stat-text">תקן compliance שדורש <strong>הדרכת אבטחה שנתית מתועדת</strong> — חובה חיצונית, לא המלצה</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">50</div>
+        <div class="stat-text">עובדים חדשים בשנה — <strong>צמיחה מהירה</strong> שמחייבת onboarding מובנה שכולל אבטחת מידע</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">4</div>
+        <div class="stat-text">שעות של חשיפת מידע רגיש של לקוחות — <strong>הנזק כבר קרה</strong>, הפתרון חייב להיות יותר מסימון וי</div>
+      </div>
+    </div>
+
+    </div><!-- close ref-content -->
+
+    <div class="task-section">
+      <h3>📝 המשימה שלכם</h3>
+      <p style="margin-bottom: 14px;">על בסיס התחקור והחומרים, מלאו יחד את חלקים א'-ד' במסמך האפיון, והתכוננו להציג את הפיצוח שלכם (5 דקות):</p>
+      <ul class="task-list">
+        <li><strong>חלק א' — הגדרת הצורך:</strong> מהו הרקע? מהו הצורך העסקי (compliance + מעבר!)? מהו הצורך ההדרכתי?</li>
+        <li><strong>חלק ב' — קהל היעד:</strong> מי הם? מה ייחודי בקהל טכנולוגי? מה ההשלכה על עיצוב הלומדה?</li>
+        <li><strong>חלק ג' — מטרות:</strong> מטרת על + 3-4 מטרות ביניים (פעלים מדידים!)</li>
+        <li><strong>חלק ד' — הפיצוח:</strong> מהו הקונספט? איך יוצרים לומדת compliance שלא משעממת? שיטת ארגון? ניווט?</li>
+      </ul>
+    </div>
+
+    <div class="footer-note">בהצלחה! המרצה תגיע לבקר בחדר שלכם 🎓</div>
+  </div>
+</div>
+
+<!-- PIN Modal -->
+<div class="pin-overlay" id="pin-overlay">
+  <div class="pin-modal">
+    <div class="pin-icon">🔐</div>
+    <h3>קוד גישה לחומרי הרקע</h3>
+    <p>הזינו את קוד ה-PIN שקיבלתם מהמרצה</p>
+    <div class="pin-inputs">
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="pin-1" autofocus>
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="pin-2">
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="pin-3">
+      <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="pin-4">
+    </div>
+    <div class="pin-error-msg" id="pin-error"></div>
+    <button class="pin-cancel" onclick="closePin()">ביטול</button>
+  </div>
+</div>
+
+<script>
+  // Agent URLs - to be configured by the instructor
+  const agentUrls = {
+    1: 'https://chatgpt.com/g/g-699e8eeebacc819190b5795cf7b5e7b0-rsht-hym-htykvn', // URL for Rinat (hotel)
+    2: 'https://chatgpt.com/g/g-699e9293cf448191b62e8215880a2abc-lvn-drvry-smnk-l-tknvlvgyvt-shvmrh-bytvkh', // URL for Alon (insurance)
+    3: 'https://chatgpt.com/g/g-699e921258348191937f5035a886a352-dnh-mzrkhy-mnhlt-khvvyyt-lqvkh-rsht-bzr', // URL for Dana (retail)
+    4: 'https://chatgpt.com/g/g-699e93b56a5881918ddb0dcac4488432-rvny-shgb-vp-hr-novatech', // URL for Roni (startup)
+  };
+
+  function openAgent(group) {
+    const url = agentUrls[group];
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      alert('הלינק לסוכן הקולי עדיין לא הוזן. פנו למרצה או השתמשו בחומרי הרקע הכתובים.');
+    }
+  }
+
+  // PIN system
+  const PIN_CODE = '2468';
+  let unlockedGroups = {};
+  let pendingGroup = null;
+
+  function toggleRef(group) {
+    const content = document.getElementById('ref-' + group);
+    const toggle = content.previousElementSibling;
+
+    if (content.classList.contains('open')) {
+      content.classList.remove('open');
+      toggle.classList.remove('open');
+      return;
+    }
+
+    if (unlockedGroups[group]) {
+      content.classList.add('open');
+      toggle.classList.add('open');
+      return;
+    }
+
+    pendingGroup = group;
+    openPin();
+  }
+
+  function openPin() {
+    document.getElementById('pin-overlay').classList.add('active');
+    document.getElementById('pin-error').textContent = '';
+    const inputs = document.querySelectorAll('.pin-inputs input');
+    inputs.forEach(i => { i.value = ''; i.classList.remove('error'); });
+    inputs[0].focus();
+  }
+
+  function closePin() {
+    document.getElementById('pin-overlay').classList.remove('active');
+    pendingGroup = null;
+  }
+
+  function checkPin() {
+    const p1 = document.getElementById('pin-1').value;
+    const p2 = document.getElementById('pin-2').value;
+    const p3 = document.getElementById('pin-3').value;
+    const p4 = document.getElementById('pin-4').value;
+    const entered = p1 + p2 + p3 + p4;
+
+    if (entered.length < 4) return;
+
+    if (entered === PIN_CODE) {
+      unlockedGroups[pendingGroup] = true;
+      closePin();
+      const content = document.getElementById('ref-' + pendingGroup);
+      const toggle = content.previousElementSibling;
+      content.classList.add('open');
+      toggle.classList.add('open');
+      toggle.classList.remove('locked');
+      toggle.classList.add('unlocked');
+    } else {
+      document.getElementById('pin-error').textContent = 'קוד שגוי. נסו שוב.';
+      const inputs = document.querySelectorAll('.pin-inputs input');
+      inputs.forEach(i => { i.classList.add('error'); });
+      setTimeout(() => {
+        inputs.forEach(i => { i.value = ''; i.classList.remove('error'); });
+        inputs[0].focus();
+      }, 600);
+    }
+  }
+
+  // PIN input behavior
+  document.addEventListener('DOMContentLoaded', () => {
+    const pinInputs = document.querySelectorAll('.pin-inputs input');
+    pinInputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = val;
+        if (val && index < 3) {
+          pinInputs[index + 1].focus();
+        }
+        if (index === 3 && val) {
+          checkPin();
+        }
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          pinInputs[index - 1].focus();
+        }
+        if (e.key === 'Escape') {
+          closePin();
+        }
+      });
+    });
+
+    // Mark all ref-toggles as locked initially
+    document.querySelectorAll('.ref-toggle').forEach(t => t.classList.add('locked'));
+  });
+
+  // Timer state
+  let timerInterval = null;
+  let timerSeconds = 40 * 60;
+  let timerRunning = false;
+  let currentGroup = null;
+
+  function showScenario(group) {
+    document.getElementById('home').classList.remove('active');
+    document.getElementById('scenario-' + group).classList.add('active');
+    currentGroup = group;
+    // Reset timer for this group
+    timerSeconds = 40 * 60;
+    timerRunning = false;
+    if (timerInterval) clearInterval(timerInterval);
+    updateTimerDisplay();
+    updateTimerButton();
+    window.scrollTo(0, 0);
+  }
+
+  function goHome() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerRunning = false;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('home').classList.add('active');
+    currentGroup = null;
+    window.scrollTo(0, 0);
+  }
+
+  function toggleTimer(group) {
+    if (timerRunning) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+    } else {
+      timerRunning = true;
+      timerInterval = setInterval(() => {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          timerRunning = false;
+          updateTimerButton();
+          // Flash effect
+          const display = document.getElementById('timer-' + currentGroup);
+          display.textContent = "הזמן נגמר!";
+          display.classList.add('warning');
+        }
+      }, 1000);
+    }
+    updateTimerButton();
+  }
+
+  function resetTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerRunning = false;
+    timerSeconds = 40 * 60;
+    updateTimerDisplay();
+    updateTimerButton();
+    if (currentGroup) {
+      const display = document.getElementById('timer-' + currentGroup);
+      display.classList.remove('warning');
+    }
+  }
+
+  function updateTimerDisplay() {
+    if (!currentGroup) return;
+    const minutes = Math.floor(timerSeconds / 60);
+    const seconds = timerSeconds % 60;
+    const display = document.getElementById('timer-' + currentGroup);
+    display.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
+    // Warning when under 5 minutes
+    if (timerSeconds <= 300 && timerSeconds > 0) {
+      display.classList.add('warning');
+    } else if (timerSeconds > 300) {
+      display.classList.remove('warning');
+    }
+  }
+
+  function updateTimerButton() {
+    if (!currentGroup) return;
+    const btn = document.getElementById('timer-btn-' + currentGroup);
+    if (timerRunning) {
+      btn.textContent = 'השהייה';
+      btn.classList.remove('start');
+      btn.classList.add('pause');
+    } else {
+      btn.textContent = 'התחלה';
+      btn.classList.remove('pause');
+      btn.classList.add('start');
+    }
+  }
+</script>
+
+</body>
+</html>
