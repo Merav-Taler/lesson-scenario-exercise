@@ -20,6 +20,9 @@
     --group4: #1B813E;
     --group4-light: #E8F5ED;
     --group4-border: #8BC9A0;
+    --group5: #C4841D;
+    --group5-light: #FFF5E6;
+    --group5-border: #E0B87A;
     --bg: #FAFAFA;
     --text: #1A1A2E;
     --text-light: #555;
@@ -80,10 +83,24 @@
 
   .groups-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 24px;
-    max-width: 700px;
+    max-width: 900px;
     width: 100%;
+  }
+
+  .groups-grid .group-card:nth-child(1),
+  .groups-grid .group-card:nth-child(2),
+  .groups-grid .group-card:nth-child(3) {
+    grid-column: span 2;
+  }
+
+  .groups-grid .group-card:nth-child(4) {
+    grid-column: 2 / span 2;
+  }
+
+  .groups-grid .group-card:nth-child(5) {
+    grid-column: 4 / span 2;
   }
 
   .group-card {
@@ -147,6 +164,10 @@
   .group-card[data-group="4"]::before { background: var(--group4); }
   .group-card[data-group="4"]:hover { border-color: var(--group4-border); }
   .group-card[data-group="4"] .group-number { color: var(--group4); }
+
+  .group-card[data-group="5"]::before { background: var(--group5); }
+  .group-card[data-group="5"]:hover { border-color: var(--group5-border); }
+  .group-card[data-group="5"] .group-number { color: var(--group5); }
 
   /* ===== SCENARIO SCREEN ===== */
   .scenario-screen {
@@ -233,6 +254,7 @@
   [data-active-group="2"] .scenario-badge { background: var(--group2-light); color: var(--group2); }
   [data-active-group="3"] .scenario-badge { background: var(--group3-light); color: var(--group3); }
   [data-active-group="4"] .scenario-badge { background: var(--group4-light); color: var(--group4); }
+  [data-active-group="5"] .scenario-badge { background: var(--group5-light); color: var(--group5); }
 
   .scenario-header h2 {
     font-size: 30px;
@@ -323,6 +345,7 @@
   [data-active-group="2"] .quote-block { border-right-color: var(--group2); }
   [data-active-group="3"] .quote-block { border-right-color: var(--group3); }
   [data-active-group="4"] .quote-block { border-right-color: var(--group4); }
+  [data-active-group="5"] .quote-block { border-right-color: var(--group5); }
 
   /* Stat block */
   .stat-block {
@@ -345,6 +368,7 @@
   [data-active-group="2"] .stat-number { color: var(--group2); }
   [data-active-group="3"] .stat-number { color: var(--group3); }
   [data-active-group="4"] .stat-number { color: var(--group4); }
+  [data-active-group="5"] .stat-number { color: var(--group5); }
 
   .stat-text {
     font-size: 15px;
@@ -363,6 +387,7 @@
   [data-active-group="2"] .task-section { border-color: var(--group2-border); background: var(--group2-light); }
   [data-active-group="3"] .task-section { border-color: var(--group3-border); background: var(--group3-light); }
   [data-active-group="4"] .task-section { border-color: var(--group4-border); background: var(--group4-light); }
+  [data-active-group="5"] .task-section { border-color: var(--group5-border); background: var(--group5-light); }
 
   .task-section h3 {
     font-size: 20px;
@@ -689,7 +714,7 @@
 
   /* Responsive */
   @media (max-width: 700px) {
-    .groups-grid { grid-template-columns: 1fr; max-width: 340px; }
+    .groups-grid { grid-template-columns: 1fr; max-width: 380px; }
     .home-header h1 { font-size: 28px; }
     .scenario-screen { padding: 16px; }
     .top-bar { flex-direction: column; gap: 12px; }
@@ -727,6 +752,11 @@
         <div class="group-number">4</div>
         <div class="group-title">"NovaTech"</div>
         <div class="group-domain">הייטק · אבטחת מידע</div>
+      </div>
+      <div class="group-card" data-group="5" onclick="showScenario(5)">
+        <div class="group-number">5</div>
+        <div class="group-title">"שטראוס" — מפעל שדרות</div>
+        <div class="group-domain">ייצור מזון · בטיחות · Onboarding</div>
       </div>
     </div>
   </div>
@@ -1230,6 +1260,131 @@
   </div>
 </div>
 
+<!-- ===== SCENARIO 5 ===== -->
+<div id="scenario-5" class="screen" data-active-group="5">
+  <div class="scenario-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goHome()">← חזרה לדף הראשי</button>
+      <div class="timer-container">
+        <button class="timer-btn reset" onclick="resetTimer()">איפוס</button>
+        <div class="timer-display" id="timer-5">40:00</div>
+        <button class="timer-btn start" id="timer-btn-5" onclick="toggleTimer(5)">התחלה</button>
+      </div>
+    </div>
+
+    <div class="scenario-header">
+      <span class="scenario-badge">קבוצה 5</span>
+      <h2>"שטראוס" — מפעל חטיפים, שדרות</h2>
+      <div class="org-type">תחום: ייצור מזון · בטיחות בעבודה · Onboarding</div>
+    </div>
+
+    <div class="agent-section">
+      <div class="agent-avatar">👨‍🔧</div>
+      <div class="agent-name">אופיר מלכה</div>
+      <div class="agent-role">מנהל ייצור · מפעל שטראוס-שדרות</div>
+      <div class="agent-desc">
+        אופיר פנה אליכם כמפתחי הדרכה כדי שתעזרו לו לבנות מסלול onboarding לעובדים חדשים בקווי הייצור.
+        <strong>תחקרו אותו</strong> — שאלו שאלות, חפרו, נסו להבין את הרקע, הצורך, קהל היעד והאתגרים. רק ככה תוכלו למלא את מסמך האפיון!
+      </div>
+      <button class="agent-btn" id="agent-btn-5" onclick="openAgent(5)">
+        <span class="pulse-dot"></span>
+        התחילו שיחה עם אופיר
+      </button>
+    </div>
+
+    <div class="tips-section">
+      <h4>טיפים לתחקור מוצלח</h4>
+      <ul class="tips-list">
+        <li>שאלו על האתגר: "מה קורה כשעובד חדש מתחיל? מה לא עובד?"</li>
+        <li>חפרו על בטיחות: "אמרת שיש תאונות — מה גורם להן?"</li>
+        <li>הבינו את הקהל: "מי העובדים? מאיפה הם מגיעים? מה הרקע שלהם?"</li>
+        <li>שאלו על ניסיון עבר: "נעשה onboarding עד היום? מה לא עבד?"</li>
+        <li>שאלו על מגבלות: "איפה הם ילמדו? כמה זמן יש? אילו מכשירים?"</li>
+      </ul>
+    </div>
+
+    <div class="ref-toggle" onclick="toggleRef(5)">
+      <h3><span class="icon">📁</span> חומרי רקע כתובים (לחצו לפתוח)</h3>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ref-content" id="ref-5">
+
+    <div class="content-section">
+      <h3><span class="icon">📋</span> הבריף שלכם</h3>
+      <p>
+        את/ה מפתח/ת לומדות בחברת פיתוח הדרכה. הגיעה אליכם פנייה מאופיר מלכה, מנהל ייצור במפעל שטראוס-פריטו ליי בשדרות — מפעל חטיפים מלוחים (תפוצ'יפס, דוריטוס, בייגלה) עם כ-400 עובדי ייצור.
+      </p>
+      <p style="margin-top: 12px;">
+        אופיר מסביר: <em>"כל שנה נכנסים אלינו כ-80 עובדים חדשים. היום לוקח 3 חודשים עד שעובד מתפקד על הקו. בזמן הזה הוא טועה, עוצר לנו קווים, ובמקרים הכי קשים — נפגע. 70% מתאונות העבודה שלנו הן אצל עובדים עם ותק של פחות מחצי שנה. אני צריך מסלול הכשרה שונה — משהו שבאמת יכין אותם לרצפת הייצור, לא עוד יום של פאוור פוינט."</em>
+      </p>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📧</span> מייל פנימי — ממנהלת האיכות להנהלה</h3>
+      <div class="email-block">
+        <div class="email-header">
+          <span><strong>מאת:</strong> אורלי גולדברג, מנהלת איכות ובטיחות</span>
+          <span><strong>אל:</strong> הנהלת המפעל</span>
+          <span><strong>נושא:</strong> ממצאים חוזרים — עובדים חדשים</span>
+        </div>
+        <div class="email-body">
+          צוות יקר,<br><br>
+          בביקורת GMP האחרונה נמצאו 8 ממצאים, 5 מתוכם קשורים ישירות לעובדים חדשים: כניסה לאזור ייצור ללא ציוד מגן מלא, מזון אישי באזור ייצור, חוסר שטיפת ידיים, וכן הלאה. בנוסף, Walmart הודיעו על אודיט בעוד 3 חודשים.<br><br>
+          אני לא יכולה לחתום על "הדרכה בוצעה" כשהמציאות היא שעובד שומע הרצאה של 3 שעות ביום הראשון ולא זוכר כלום ביום השני.<br><br>
+          אורלי
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">💬</span> ציטוטים מעובדים (מתוך ראיונות שטח)</h3>
+      <div class="quote-block">
+        "אמרו לי ביום הראשון 'לך תעמוד ליד שלומי'. שלומי בקושי הסתכל עליי, הוא היה באמצע משמרת. למדתי מטעויות."
+        <div class="quote-author">— דניאל, אופרטור חדש, ותק 3 חודשים</div>
+      </div>
+      <div class="quote-block">
+        "אני 12 שנה על הקו. אני יודע מה עובד. אבל כל פעם שולחים אליי מישהו חדש ואני צריך ללמד אותו הכל מאפס בזמן שאני רץ על המכונה."
+        <div class="quote-author">— משה, אופרטור ותיק, ותק 12 שנים</div>
+      </div>
+      <div class="quote-block">
+        "קיבלתי חוברת של 60 עמודים ביום הראשון. לא קראתי אפילו עמוד אחד. הייתי צריך לדעת איפה חדר האוכל ואיך לובשים את החלוק."
+        <div class="quote-author">— סלם, אופרטור חדש, ותק חודשיים</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3><span class="icon">📊</span> נתונים שקיבלתם מהארגון</h3>
+      <div class="stat-block">
+        <div class="stat-number">70%</div>
+        <div class="stat-text">מתאונות העבודה קורות לעובדים עם ותק של <strong>פחות מחצי שנה</strong></div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">3</div>
+        <div class="stat-text">חודשים עד שעובד חדש <strong>מתפקד באופן עצמאי</strong> — המטרה: לקצר לחודש וחצי</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">12</div>
+        <div class="stat-text">עצירות קו בחודש בגלל טעויות עובדים חדשים — <strong>~75,000 ₪/חודש</strong></div>
+      </div>
+    </div>
+
+    </div><!-- close ref-content -->
+
+    <div class="task-section">
+      <h3>📝 המשימה שלכם</h3>
+      <p style="margin-bottom: 14px;">על בסיס התחקור והחומרים, מלאו יחד את חלקים א'-ד' במסמך האפיון, והתכוננו להציג את הפיצוח שלכם (5 דקות):</p>
+      <ul class="task-list">
+        <li><strong>חלק א' — הגדרת הצורך:</strong> מהו הרקע? מהו הצורך העסקי (לא רק בטיחות!)? מהו הצורך ההדרכתי (ידע? מיומנות? תפיסה?)?</li>
+        <li><strong>חלק ב' — קהל היעד:</strong> מי הם? מה מאפיין אותם? מה מחסום השפה? מה ההשלכה על עיצוב הלומדה?</li>
+        <li><strong>חלק ג' — מטרות:</strong> מטרת על + 3-4 מטרות ביניים (פעלים מדידים!)</li>
+        <li><strong>חלק ד' — הפיצוח:</strong> מהו הקונספט? איך מלמדים בטיחות שלא תישכח? שיטת ארגון? ניווט?</li>
+      </ul>
+    </div>
+
+    <div class="footer-note">בהצלחה! 🎓</div>
+  </div>
+</div>
+
 <!-- PIN Modal -->
 <div class="pin-overlay" id="pin-overlay">
   <div class="pin-modal">
@@ -1254,6 +1409,7 @@
     2: 'https://chatgpt.com/g/g-699e9293cf448191b62e8215880a2abc-lvn-drvry-smnk-l-tknvlvgyvt-shvmrh-bytvkh', // URL for Alon (insurance)
     3: 'https://chatgpt.com/g/g-699e921258348191937f5035a886a352-dnh-mzrkhy-mnhlt-khvvyyt-lqvkh-rsht-bzr', // URL for Dana (retail)
     4: 'https://chatgpt.com/g/g-699e93b56a5881918ddb0dcac4488432-rvny-shgb-vp-hr-novatech', // URL for Roni (startup)
+    5: 'https://chatgpt.com/g/g-699f062ddba88191ab8b4268b00908a7-vpyr-mlkh-mnhl-yytsvr-mp-l-shtrvs-shdrvt', // URL for Ofir (Strauss factory)
   };
 
   function openAgent(group) {
@@ -1261,7 +1417,7 @@
     if (url) {
       window.open(url, '_blank');
     } else {
-      alert('הלינק לסוכן הקולי עדיין לא הוזן. השתמשו בחומרי הרקע הכתובים.');
+      alert('השתמשו בחומרי הרקע הכתובים.');
     }
   }
 
